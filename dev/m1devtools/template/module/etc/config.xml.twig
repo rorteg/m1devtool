@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+{% include "@docheader/docheader.twig" %}
+-->
+<config>
+    <modules>
+        <{{ modulename }}>
+            <version>{{ moduleversion | default('0.1.0') }}</version>
+        </{{ modulename }}>
+    </modules>
+    <global>
+        <helpers>
+            <{{ modulename | lower }}>
+                <class>{{ modulename }}_Helper</class>
+            </{{ modulename | lower }}>
+        </helpers>
+    </global>
+</config>

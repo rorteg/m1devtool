@@ -3,3 +3,4 @@ phpunit.xml
 clover.xml
 coveralls-upload.json
 .idea/
+m1devtools.json

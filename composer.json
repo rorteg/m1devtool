@@ -21,12 +21,29 @@
         }
     },
     "require": {
-        "php": "^5.6 || ^7.0"
+        "php": "^5.6 || ^7.0",
+        "hassankhan/config": "^0.11.2",
+        "symfony/console": "^3.0 || ^2.8",
+        "symfony/filesystem": "^3.3",
+        "twig/twig": "~1.0"
     },
     "require-dev": {
-        "malukenho/docheader": "^0.1.6",
+        "malukenho/docheader": "^0.1.5",
+        "mikey179/vfsStream": "^1.6.4",
+        "mockery/mockery": "^0.9.8",
+        "php-mock/php-mock-phpunit": "^2.0 || ^1.1.2",
         "phpunit/phpunit": "^6.0.7 || ^5.7.14",
         "zendframework/zend-coding-standard": "~1.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ROB\\M1devtools\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ROBTest\\M1devtools\\": "test/"
+        }
     },
     "scripts": {
         "check": [

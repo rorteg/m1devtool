@@ -102,7 +102,6 @@ class Config extends NoodlehausConfig
 
     /**
      * @return Translator
-     *
      * @codeCoverageIgnore
      */
     public static function getTranslator()
@@ -110,7 +109,11 @@ class Config extends NoodlehausConfig
         if (self::$translator === null) {
             $config = self::getInstance();
             $defaults = $config->getDefaults();
-            $translatorConfig = array_merge($defaults['translator'], $config->get('translator'));
+
+            $translatorConfig = array_replace_recursive(
+                $defaults['translator'],
+                $config->get('translator')
+            );
 
             $translationFilePatterns = $translatorConfig['translation_file_patterns'];
             self::$translator = new Translator();
@@ -150,5 +153,15 @@ class Config extends NoodlehausConfig
     {
         $config = self::getInstance();
         return $config->get($key, $default);
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     */
+    public static function setConfig($key, $value)
+    {
+        $config = self::getInstance();
+        $config->set($key, $value);
     }
 }

@@ -33,15 +33,3 @@ $application->addCommands([
 ]);
 
 $application->run();
-
-//$conf = Config::getInstance();
-/*$twig = Config::getTwig();
-
-echo $twig->render('module/etc/config.xml.twig', [
-    'vendorname' => 'ROB',
-    'modulename' => 'Test',
-    ''
-]);
-
-echo PHP_EOL;*/
-

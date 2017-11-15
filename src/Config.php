@@ -72,9 +72,9 @@ class Config extends NoodlehausConfig
                 'locale' => 'en_US',
                 'translation_file_patterns' => [
                     [
-                        'type' => 'gettext',
+                        'type' => 'phparray',
                         'base_dir' => __DIR__ . '/../i18n',
-                        'pattern' => '%s.mo'
+                        'pattern' => '%s/messages.php'
                     ]
                 ]
             ]
@@ -109,11 +109,14 @@ class Config extends NoodlehausConfig
     {
         if (self::$translator === null) {
             $config = self::getInstance();
-            $translatorConfig = $config->get('translator');
+            $defaults = $config->getDefaults();
+            $translatorConfig = array_merge($defaults['translator'], $config->get('translator'));
+
             $translationFilePatterns = $translatorConfig['translation_file_patterns'];
             self::$translator = new Translator();
+
             foreach ($translationFilePatterns as $fp) {
-                if (! isset($fp['type']) || ! isset($fp['base_idr']) || ! isset($fp['pattern'])) {
+                if (! isset($fp['type']) || ! isset($fp['base_dir']) || ! isset($fp['pattern'])) {
                     continue;
                 }
 
@@ -123,11 +126,16 @@ class Config extends NoodlehausConfig
 
                 self::$translator->addTranslationFilePattern(
                     $fp['type'],
-                    $fp['base_idr'],
+                    $fp['base_dir'],
                     $fp['pattern'],
                     $fp['text_domain']
                 );
             }
+
+            self::$translator->setLocale($translatorConfig['locale']);
+            self::$translator->setFallbackLocale('en_US');
+
+            self::$translator->setCache(null);
         }
 
         return self::$translator;

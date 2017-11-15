@@ -8,6 +8,7 @@
 namespace ROBTest\M1devtools\Module;
 
 use PHPUnit\Framework\TestCase;
+use ROB\M1devtools\Config;
 use ROB\M1devtools\Module\Exception\RuntimeException;
 use ROB\M1devtools\Module\Module;
 
@@ -29,7 +30,9 @@ class ModuleTest extends TestCase
         $module->setName('ROB_Test');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(Module::MESSAGE_INVALID_CODEPOOL);
+        $this->expectExceptionMessage(
+            $this->translate(Module::MESSAGE_INVALID_CODEPOOL)
+        );
 
         $module->getModulePath();
     }
@@ -40,7 +43,9 @@ class ModuleTest extends TestCase
         $module->setName('ROB');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(Module::MESSAGE_INVALID_NAME);
+        $this->expectExceptionMessage(
+            $this->translate(Module::MESSAGE_INVALID_NAME)
+        );
 
         $module->getName();
     }
@@ -52,5 +57,11 @@ class ModuleTest extends TestCase
             ->setCodePool('local');
 
         $this->assertEquals($module->getModulePath(), 'app/code/local/ROB/Test');
+    }
+
+    private function translate($message)
+    {
+        $translator = Config::getTranslator();
+        return $translator->translate($message);
     }
 }

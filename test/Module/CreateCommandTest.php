@@ -54,7 +54,7 @@ class CreateCommandTest extends TestCase
 
     /**
      * @dataProvider            provideErrorModuleNameForQuestionInputs
-     * @expectedException       RuntimeException
+     * /expectedException       RuntimeException
      */
     public function testRunWithoutModuleNameArgument($moduleName)
     {
@@ -70,6 +70,7 @@ class CreateCommandTest extends TestCase
         }
 
         $this->applicationTester->run(['command' => $this->commandAlias]);
+        echo $this->applicationTester->getDisplay();
     }
 
     /**

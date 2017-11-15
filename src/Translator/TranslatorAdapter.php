@@ -21,6 +21,6 @@ class TranslatorAdapter extends Translator implements TranslatorInterface
             return $message;
         }
 
-        parent::translate($message, $textDomain, $locale);
+        return parent::translate($message, $textDomain, $locale);
     }
 }

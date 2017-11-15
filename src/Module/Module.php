@@ -171,6 +171,7 @@ class Module
     /**
      * @param $text
      * @return string
+     * @codeCoverageIgnore
      */
     public function translate($text)
     {

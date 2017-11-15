@@ -74,7 +74,10 @@ EOT;
             $module->validateName();
         }
 
-        $output->writeln(sprintf('<info>Module Name is: %s</info>', $module->getName()));
+        $output->writeln(sprintf(
+            '<info>Module Name is: %s</info>',
+            $translator->translate('Please enter the name of the Module (Vendor_Module):')
+        ));
     }
 
     /**

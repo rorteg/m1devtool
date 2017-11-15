@@ -8,6 +8,7 @@
 namespace ROB\M1devtools\Module;
 
 use ROB\M1devtools\Module\Exception\RuntimeException;
+use ROB\M1devtools\Config;
 
 class Module
 {
@@ -15,12 +16,17 @@ class Module
     const MAGE_CODE_LOCAL = 'app/code/local';
     const MAGE_CODE_COMMUNITY = 'app/code/community';
     const MODULE_FOLDER_PATTERN = 'app/code/%s/%s/%s';
+    const MESSAGE_INVALID_CODEPOOL = 'The codePool is invalid. Only accepted: "local" or "community"';
+    const MESSAGE_INVALID_NAME = 'The module name needs to follow the following format: Vendor_Module';
 
     /**
      * @var string
      */
     private $name;
 
+    /**
+     * @var string
+     */
     private $codePool;
 
     protected $moduleStructure = [
@@ -48,9 +54,22 @@ class Module
      * Module constructor.
      * @param string $name
      */
-    public function __construct($name)
+    public function __construct($name = '')
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModulePath()
+    {
+        return sprintf(
+            self::MODULE_FOLDER_PATTERN,
+            $this->validateCodePool(),
+            $this->getVendorName(),
+            $this->getModuleName()
+        );
     }
 
     /**
@@ -102,7 +121,7 @@ class Module
      */
     public function getCodePool()
     {
-        return $this->codePool;
+        return $this->validateCodePool();
     }
 
     /**
@@ -128,7 +147,7 @@ class Module
         if (! substr_count($moduleName, '_')
             || count($moduleNameExplode) !== 2
             || ($moduleNameExplode[1] == '')) {
-            throw new RuntimeException('The module name needs to follow the following format: Vendor_Module');
+            throw new RuntimeException($this->translate(self::MESSAGE_INVALID_NAME));
         }
 
         return $moduleName;
@@ -143,9 +162,19 @@ class Module
         $codePool = $this->codePool;
 
         if (! in_array($codePool, $this->allowedCodePool)) {
-            throw new RuntimeException('The codePool is invalid. Only accepted: "local" or "community"');
+            throw new RuntimeException($this->translate(self::MESSAGE_INVALID_CODEPOOL));
         }
 
         return $codePool;
+    }
+
+    /**
+     * @param $text
+     * @return string
+     */
+    public function translate($text)
+    {
+        $translator = Config::getTranslator();
+        return $translator->translate($text);
     }
 }

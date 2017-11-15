@@ -30,6 +30,9 @@ class CreateCommandTest extends TestCase
      */
     protected $applicationTester;
 
+    /**
+     * @var string
+     */
     protected $commandAlias = 'module:create';
 
     /**

@@ -8,9 +8,7 @@
 namespace ROB\M1devtools\Module;
 
 use ROB\M1devtools\Config;
-use ROB\M1devtools\Module\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -28,6 +26,11 @@ EOT;
      * @var Config
      */
     protected $config;
+
+    /**
+     * @var Module|null
+     */
+    protected $moduleInstance = null;
 
     /**
      * Configure command.
@@ -49,32 +52,43 @@ EOT;
     {
         $moduleName = $input->getArgument('name');
         $helper = $this->getHelper('question');
+        $translator = Config::getTranslator();
 
         if (! $moduleName) {
-            $question = new Question('<question>Please enter the name of the Module (Vendor_Module): </question>');
+            $question = new Question(
+                '<question>' .
+                $translator->translate('Please enter the name of the Module (Vendor_Module):') .
+                '</question> '
+            );
 
             $question->setValidator(function ($answer) {
-                $this->validateModuleName($answer);
+                return $this->getModuleInstance($answer)->validateName();
             });
 
             $question->setMaxAttempts(3);
-            $moduleName = $helper->ask($input, $output, $question);
+            $module = $this->getModuleInstance(
+                $helper->ask($input, $output, $question)
+            );
         } else {
-            $this->validateModuleName($moduleName);
+            $module = $this->getModuleInstance($moduleName);
+            $module->validateName();
         }
 
-        $output->writeln(sprintf('<info>%s</info>', $moduleName));
+        $output->writeln(sprintf('<info>Module Name is: %s</info>', $module->getName()));
     }
 
-    private function validateModuleName($moduleName)
+    /**
+     * @param string $name
+     * @return null|Module
+     */
+    protected function getModuleInstance($name = '')
     {
-        $moduleNameExplode = explode('_', $moduleName);
-        if (! substr_count($moduleName, '_')
-            || count($moduleNameExplode) !== 2
-            || ($moduleNameExplode[1] == '')) {
-            throw new RuntimeException('The module name needs to follow the following format: Vendor_Module');
+        if ($this->moduleInstance === null) {
+            $this->moduleInstance = new Module($name);
+        } else {
+            $this->moduleInstance->setName($name);
         }
 
-        return $moduleName;
+        return $this->moduleInstance;
     }
 }

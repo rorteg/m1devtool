@@ -12,6 +12,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\ApplicationTester;
 use ROB\M1devtools\Module\CreateCommand;
 use ROB\M1devtools\Module\Exception\RuntimeException;
+use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * @runTestsInSeparateProcesses
@@ -50,9 +51,13 @@ class CreateCommandTest extends TestCase
 
     /**
      * @todo test
+     * @dataProvider            provideErrorModuleNameForQuestionInputs
+     * @expectedException       RuntimeException
      */
-    public function testRunWithoutModuleNameArgument()
+    public function testRunWithoutModuleNameArgument($moduleName)
     {
+        $commandTester = new CommandTester($this->createCommand);
+        $commandTester->setInputs([$moduleName]);
         $this->applicationTester->run(['command' => $this->commandAlias]);
     }
 
@@ -63,6 +68,13 @@ class CreateCommandTest extends TestCase
     public function testRunWithRuntimeExceptionWhenModuleNameIsIncorrectFormat($moduleName)
     {
         $this->applicationTester->run(['command' => $this->commandAlias, 'name' => $moduleName]);
+    }
+
+    public function provideErrorModuleNameForQuestionInputs()
+    {
+        return [
+            ['rob', 'ROB_', 'ROB_Test', '']
+        ];
     }
 
     public function provideErrorModuleNames()

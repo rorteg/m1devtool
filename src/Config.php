@@ -8,7 +8,7 @@
 namespace ROB\M1devtools;
 
 use Noodlehaus\Config as NoodlehausConfig;
-use Zend\I18n\Translator\Translator;
+use ROB\M1devtools\Translator\TranslatorAdapter as Translator;
 
 class Config extends NoodlehausConfig
 {
@@ -66,8 +66,8 @@ class Config extends NoodlehausConfig
     protected function getDefaults()
     {
         return [
-            'template_path' => getcwd() . '/vendor/rorteg/m1devtools/dev/template',
-            'template_docheader' => getcwd() . '/vendor/rorteg/m1devtools/dev/template/docheader',
+            'template_path' => __DIR__ . '/../dev/m1devtools/template',
+            'template_docheader' => __DIR__ . '/../dev/m1devtools/template/docheader',
             'translator' => [
                 'locale' => 'en_US',
                 'translation_file_patterns' => [
@@ -93,7 +93,7 @@ class Config extends NoodlehausConfig
             // Setup Twig Template
             \Twig_Autoloader::register();
             $loader = new \Twig_Loader_Filesystem($config->get('template_path'));
-            $loader->addPath($config->get('docheader_template'), 'docheader');
+            $loader->addPath($config->get('template_docheader'), 'docheader');
             self::$twig = new \Twig_Environment($loader);
         }
 

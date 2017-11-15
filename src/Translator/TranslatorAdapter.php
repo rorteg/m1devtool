@@ -14,6 +14,7 @@ class TranslatorAdapter extends Translator implements TranslatorInterface
 {
     /**
      * {@inheritDoc}
+     * @codeCoverageIgnore
      */
     public function translate($message, $textDomain = 'default', $locale = null)
     {

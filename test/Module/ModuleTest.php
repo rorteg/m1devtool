@@ -37,7 +37,7 @@ class ModuleTest extends TestCase
         $module->getModulePath();
     }
 
-    public function testWhenModuleNamsIsInvalid()
+    public function testWhenModuleNameIsInvalid()
     {
         $module = $this->module;
         $module->setName('ROB');
@@ -57,6 +57,16 @@ class ModuleTest extends TestCase
             ->setCodePool('local');
 
         $this->assertEquals($module->getModulePath(), 'app/code/local/ROB/Test');
+    }
+
+    public function testGetModuleAliasAndCodePool()
+    {
+        $module = $this->module;
+        $module->setName('ROB_Test');
+        $module->setCodePool('local');
+
+        $this->assertEquals($module->getCodePool(), 'local');
+        $this->assertEquals($module->getModuleAlias(), 'rob_test');
     }
 
     private function translate($message)

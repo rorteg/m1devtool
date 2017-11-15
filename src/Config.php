@@ -119,7 +119,7 @@ class Config extends NoodlehausConfig
 
             foreach ($translationFilePatterns as $fp) {
                 if (! isset($fp['type']) || ! isset($fp['base_dir']) || ! isset($fp['pattern'])) {
-                    continue;
+                    throw new \RuntimeException(__CLASS__ . ': Translator settings are invalid.');
                 }
 
                 if (! isset($fp['text_domain'])) {

@@ -22,18 +22,20 @@ class TranslateAdapterTest extends TestCase
      */
     private $translator;
 
+    private $configTranslator = [
+        'locale' => 'pt_BR',
+        'translation_file_patterns' => [
+            [
+                'type' => 'phparray',
+                'base_dir' => __DIR__ . '/i18n',
+                'pattern' => '%s/messages.php'
+            ]
+        ]
+    ];
+
     protected function setUp()
     {
-        Config::setConfig('translator', [
-            'locale' => 'pt_BR',
-            'translation_file_patterns' => [
-                [
-                    'type' => 'phparray',
-                    'base_dir' => __DIR__ . '/i18n',
-                    'pattern' => '%s/messages.php'
-                ]
-            ]
-        ]);
+        Config::setConfig('translator', $this->configTranslator);
         $this->translator = Config::getTranslator();
     }
 

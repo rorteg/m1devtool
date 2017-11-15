@@ -102,7 +102,6 @@ class Config extends NoodlehausConfig
 
     /**
      * @return Translator
-     * @codeCoverageIgnore
      */
     public static function getTranslator()
     {
@@ -148,6 +147,7 @@ class Config extends NoodlehausConfig
      * @param  string $key
      * @param  mixed  $default
      * @return mixed
+     * @codeCoverageIgnore
      */
     public static function getConfig($key, $default = null)
     {
@@ -158,6 +158,7 @@ class Config extends NoodlehausConfig
     /**
      * @param string $key
      * @param string $value
+     * @codeCoverageIgnore
      */
     public static function setConfig($key, $value)
     {

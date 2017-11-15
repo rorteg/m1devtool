@@ -26,7 +26,7 @@ final class CommandCommonOptions
     {
         $command->addArgument(
             'name',
-            InputArgument::REQUIRED,
+            InputArgument::OPTIONAL,
             'Specify the module vendor name. Ex: Vendor_Module'
         );
 
@@ -37,18 +37,5 @@ final class CommandCommonOptions
             'Specify the code pool. Ex: "community"',
             'local'
         );
-    }
-
-    /**
-     * Retrieve the vendor name from input
-     *
-     * @param InputInterface $input
-     * @return string
-     */
-    public static function getVendorName(InputInterface $input)
-    {
-        $moduleNameExplode = explode('_', $input->getArgument('name'));
-        $vendorName = $moduleNameExplode[0];
-        return $vendorName;
     }
 }

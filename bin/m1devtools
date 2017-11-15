@@ -34,8 +34,8 @@ $application->addCommands([
 
 $application->run();
 
-/*$conf = new Config();
-$twig = $conf->getTwig();
+//$conf = Config::getInstance();
+/*$twig = Config::getTwig();
 
 echo $twig->render('module/etc/config.xml.twig', [
     'vendorname' => 'ROB',

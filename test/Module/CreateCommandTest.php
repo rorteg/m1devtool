@@ -49,7 +49,7 @@ class CreateCommandTest extends TestCase
     }
 
     /**
-     * @expectedException        RuntimeException
+     * @todo test
      */
     public function testRunWithoutModuleNameArgument()
     {
@@ -70,7 +70,8 @@ class CreateCommandTest extends TestCase
         return [
             ['Rob'],
             ['Rob_'],
-            ['']
+            ['rob'],
+            ['robTest']
         ];
     }
 }

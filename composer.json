@@ -25,7 +25,8 @@
         "hassankhan/config": "^0.11.2",
         "symfony/console": "^3.0 || ^2.8",
         "symfony/filesystem": "^3.3",
-        "twig/twig": "~1.0"
+        "twig/twig": "~1.0",
+        "zendframework/zend-i18n": "^2.7"
     },
     "require-dev": {
         "malukenho/docheader": "^0.1.5",

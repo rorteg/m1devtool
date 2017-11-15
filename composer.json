@@ -47,6 +47,9 @@
             "ROBTest\\M1devtools\\": "test/"
         }
     },
+    "bin": [
+        "bin/m1devtools"
+    ],
     "scripts": {
         "check": [
             "@license-check",

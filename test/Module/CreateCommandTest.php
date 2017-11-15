@@ -53,7 +53,6 @@ class CreateCommandTest extends TestCase
     }
 
     /**
-     * @todo test
      * @dataProvider            provideErrorModuleNameForQuestionInputs
      * @expectedException       RuntimeException
      */

@@ -59,8 +59,17 @@ class CreateCommandTest extends TestCase
      */
     public function testRunWithoutModuleNameArgument($moduleName)
     {
+        $symfonyConsoleVersion = $this->getPackageComposerVersion('symfony/console');
+
         $commandTester = new CommandTester($this->createCommand);
-        $commandTester->setInputs([$moduleName]);
+
+        if (version_compare($symfonyConsoleVersion, '3.2', '<')) {
+            $helper = $this->createCommand->getHelper('question');
+            $helper->setInputStream($this->getInputStream($moduleName));
+        } else {
+            $commandTester->setInputs([$moduleName]);
+        }
+
         $this->applicationTester->run(['command' => $this->commandAlias]);
     }
 
@@ -88,5 +97,27 @@ class CreateCommandTest extends TestCase
             ['rob'],
             ['robTest']
         ];
+    }
+
+    private function getPackageComposerVersion($packageName)
+    {
+        $data = [];
+        $packages = json_decode(file_get_contents(__DIR__ . '/../../vendor/composer/installed.json'), true);
+
+
+        foreach ($packages as $package) {
+            $data[$package['name']] = $package['version'];
+        }
+
+        return $data[$packageName];
+    }
+
+    protected function getInputStream($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fputs($stream, $input);
+        rewind($stream);
+
+        return $stream;
     }
 }

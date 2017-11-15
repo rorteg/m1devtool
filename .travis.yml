@@ -80,6 +80,6 @@ notifications:
   email: false
   slack:
     rooms:
-      - m1devtools:EaZztxpqtl8mGiHD3Zgtd5qk
+      - m1devtools:EaZztxpqtl8mGiHD3Zgtd5qk#general
     on_success: change
     on_failure: always

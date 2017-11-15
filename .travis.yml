@@ -78,6 +78,8 @@ after_script:
 
 notifications:
   email: false
-  slack: m1devtools:EaZztxpqtl8mGiHD3Zgtd5qk
+  slack:
+    rooms:
+      - m1devtools:EaZztxpqtl8mGiHD3Zgtd5qk#general
     on_success: change
     on_failure: always

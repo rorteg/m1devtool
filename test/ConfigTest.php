@@ -9,6 +9,7 @@ namespace ROBTest\M1devtools;
 
 use PHPUnit\Framework\TestCase;
 use ROB\M1devtools\Config;
+use Zend\I18n\Translator\TranslatorInterface;
 
 /**
  * @runTestsInSeparateProcesses
@@ -16,9 +17,6 @@ use ROB\M1devtools\Config;
  */
 class ConfigTest extends TestCase
 {
-    /**
-     * @expectedException  \RuntimeException
-     */
     public function testTranslateConfigPrecaution()
     {
         $config = Config::getInstance();
@@ -36,6 +34,18 @@ class ConfigTest extends TestCase
             ]
         ]);
 
-        $translator = $config::getTranslator();
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage(Config::MESSAGE_INVALID_CONFIG_TRANSLATOR);
+        $config::getTranslator();
+    }
+
+    public function testTranslatorGetInstance()
+    {
+        $this->assertInstanceOf(TranslatorInterface::class, Config::getTranslator());
+    }
+
+    public function testTwigGetInstance()
+    {
+        $this->assertInstanceOf(\Twig_Environment::class, Config::getTwig());
     }
 }

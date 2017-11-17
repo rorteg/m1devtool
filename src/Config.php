@@ -27,6 +27,8 @@ class Config extends NoodlehausConfig
      */
     private static $twig = null;
 
+    const MESSAGE_INVALID_CONFIG_TRANSLATOR = __CLASS__ . ': Translator settings are invalid.';
+
     /**
      * @return null|Config
      *
@@ -119,7 +121,7 @@ class Config extends NoodlehausConfig
 
             foreach ($translationFilePatterns as $fp) {
                 if (! isset($fp['type']) || ! isset($fp['base_dir']) || ! isset($fp['pattern'])) {
-                    throw new \RuntimeException(__CLASS__ . ': Translator settings are invalid.');
+                    throw new \RuntimeException(self::MESSAGE_INVALID_CONFIG_TRANSLATOR);
                 }
 
                 if (! isset($fp['text_domain'])) {
@@ -136,7 +138,6 @@ class Config extends NoodlehausConfig
 
             self::$translator->setLocale($translatorConfig['locale']);
             self::$translator->setFallbackLocale('en_US');
-
             self::$translator->setCache(null);
         }
 

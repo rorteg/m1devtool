@@ -93,7 +93,6 @@ class Config extends NoodlehausConfig
         if (self::$twig === null) {
             $config = self::getInstance();
             // Setup Twig Template
-            \Twig_Autoloader::register();
             $loader = new \Twig_Loader_Filesystem($config->get('template_path'));
             $loader->addPath($config->get('template_docheader'), 'docheader');
             self::$twig = new \Twig_Environment($loader);

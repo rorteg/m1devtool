@@ -31,7 +31,12 @@ class CreateFirstStructure extends AbstractProcess implements ProcessInterface
      */
     public function createBasicStructure()
     {
-        $this->getFs()->mkdir($this->getModule()->getModuleBasicStructure());
+        $basicStructure = $this->getModule()->getModuleBasicStructure();
+
+        foreach ($basicStructure as $folder) {
+            $this->getFs()->mkdir($folder);
+            $this->addInModman($folder, $folder);
+        }
     }
 
     /**

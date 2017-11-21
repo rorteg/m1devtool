@@ -70,6 +70,7 @@ class Config extends NoodlehausConfig
         return [
             'template_path' => __DIR__ . '/../dev/m1devtools/template',
             'template_docheader' => __DIR__ . '/../dev/m1devtools/template/docheader',
+            'modman' => false,
             'translator' => [
                 'locale' => 'en_US',
                 'translation_file_patterns' => [

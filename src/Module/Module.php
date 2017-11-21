@@ -36,6 +36,7 @@ class Module
     const MODULE_FOLDER_CONTROLLERS = 'controllers';
     const MODULE_FOLDER_DATA = 'data';
     const MODULE_FOLDER_SQL = 'sql';
+    const MODMAN_FILE = 'modman';
 
     /**
      * @var string

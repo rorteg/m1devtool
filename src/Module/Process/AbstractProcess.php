@@ -7,14 +7,15 @@
 
 namespace ROB\M1devtools\Module\Process;
 
+use ROB\M1devtools\Config;
 use ROB\M1devtools\Module\Module;
 use Symfony\Component\Filesystem\Filesystem;
-use ROB\M1devtools\Module\Exception\RuntimeException;
-use ROB\M1devtools\Config;
 
 abstract class AbstractProcess
 {
     const MESSAGE_MODULE_EXISTS = 'The %s module already exists!';
+
+    private $fs = false;
 
     /**
      * @var Module
@@ -39,7 +40,11 @@ abstract class AbstractProcess
      */
     public function getFs()
     {
-        return new Filesystem();
+        if (! $this->fs) {
+            $this->fs = new Filesystem();
+        }
+
+        return $this->fs;
     }
 
     /**
@@ -58,5 +63,28 @@ abstract class AbstractProcess
     public function checkIfFileExistsInModuleContext($file)
     {
         return $this->getFs()->exists($this->getModule()->getModulePath() . '/' . $file);
+    }
+
+    /**
+     * @param string $target
+     * @param string $location
+     * @return bool
+     */
+    public function addInModman($target, $location)
+    {
+        if (! Config::getConfig('modman')) {
+            return false;
+        }
+
+        $module = $this->getModule();
+
+        if (! $this->getFs()->exists($module::MODMAN_FILE)) {
+            $this->getFs()->dumpFile($module::MODMAN_FILE, '# ' . $module->getName() . PHP_EOL);
+        }
+
+        $this->getFs()->appendToFile(
+            $module::MODMAN_FILE,
+            $target . '    ' . $location . PHP_EOL
+        );
     }
 }

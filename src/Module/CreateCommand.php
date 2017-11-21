@@ -8,6 +8,7 @@
 namespace ROB\M1devtools\Module;
 
 use ROB\M1devtools\Config;
+use ROB\M1devtools\Module\Process;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,6 +52,7 @@ EOT;
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $moduleName = $input->getArgument('name');
+        $codePool = $input->getOption('code-pool');
         $helper = $this->getHelper('question');
         $translator = Config::getTranslator();
 
@@ -74,10 +76,10 @@ EOT;
             $module->validateName();
         }
 
-        $output->writeln(sprintf(
-            '<info>Module Name is: %s</info>',
-            $translator->translate('Please enter the name of the Module (Vendor_Module):')
-        ));
+        $module->setCodePool($codePool);
+
+        $output->writeln('Module Name: ' . $module->getName() . PHP_EOL . 'Code Pool: ' . $module->getCodePool());
+        $output->writeln($module->runProcess(Process\CreateFirstStructure::class));
     }
 
     /**

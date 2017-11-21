@@ -8,6 +8,8 @@
 namespace ROBTest\M1devtools\Module;
 
 use PHPUnit\Framework\TestCase;
+use ROB\M1devtools\Config;
+use ROB\M1devtools\Module\Module;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Tester\ApplicationTester;
 use ROB\M1devtools\Module\CreateCommand;
@@ -54,7 +56,6 @@ class CreateCommandTest extends TestCase
 
     /**
      * @dataProvider            provideErrorModuleNameForQuestionInputs
-     * /expectedException       RuntimeException
      */
     public function testRunWithoutModuleNameArgument($moduleName)
     {
@@ -68,6 +69,9 @@ class CreateCommandTest extends TestCase
         } else {
             $commandTester->setInputs([$moduleName]);
         }
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage(Config::getTranslator()->translate(Module::MESSAGE_INVALID_NAME));
 
         $this->applicationTester->run(['command' => $this->commandAlias]);
         echo $this->applicationTester->getDisplay();

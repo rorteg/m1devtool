@@ -7,8 +7,10 @@
 
 namespace ROB\M1devtools\Module;
 
+use ROB\M1devtools\Module\Exception\ProcessException;
 use ROB\M1devtools\Module\Exception\RuntimeException;
 use ROB\M1devtools\Config;
+use ROB\M1devtools\Module\Process\ProcessInterface;
 
 class Module
 {
@@ -18,6 +20,22 @@ class Module
     const MODULE_FOLDER_PATTERN = 'app/code/%s/%s/%s';
     const MESSAGE_INVALID_CODEPOOL = 'The codePool is invalid. Only accepted: "local" or "community"';
     const MESSAGE_INVALID_NAME = 'The module name needs to follow the following format: Vendor_Module';
+    const MESSAGE_INVALID_INSTANCEOF = 'Process class "%s" needs to implement the ProcessInterface interface';
+    const MODULE_PATH_ID_MAGE_ETC_MODULES = 'mage_etc_modules';
+    const MODULE_PATH_ID_ETC = 'module_etc';
+    const MODULE_PATH_ID_HELPER = 'module_helper';
+    const MODULE_PATH_ID_BLOCK = 'module_block';
+    const MODULE_PATH_ID_MODEL = 'module_model';
+    const MODULE_PATH_ID_CONTROLLER = 'module_controller';
+    const MODULE_PATH_ID_DATA = 'module_data';
+    const MODULE_PATH_ID_SQL = 'module_sql';
+    const MODULE_FOLDER_ETC = 'etc';
+    const MODULE_FOLDER_HELPER = 'Helper';
+    const MODULE_FOLDER_BLOCK = 'Block';
+    const MODULE_FOLDER_MODULE = 'Model';
+    const MODULE_FOLDER_CONTROLLERS = 'controllers';
+    const MODULE_FOLDER_DATA = 'data';
+    const MODULE_FOLDER_SQL = 'sql';
 
     /**
      * @var string
@@ -30,19 +48,19 @@ class Module
     private $codePool;
 
     protected $moduleStructure = [
-        'mage_etc_modules' => 'app/etc/modules',
-        'module_etc' => self::MODULE_FOLDER_PATTERN . '/etc',
-        'module_helper' => self::MODULE_FOLDER_PATTERN . '/Helper',
-        'module_block' => self::MODULE_FOLDER_PATTERN . '/Block',
-        'module_model' => self::MODULE_FOLDER_PATTERN . '/Model',
-        'module_controller' => self::MODULE_FOLDER_PATTERN . '/controllers',
-        'module_data' => self::MODULE_FOLDER_PATTERN . '/data',
-        'module_sql' => self::MODULE_FOLDER_PATTERN . '/sql'
+        self::MODULE_PATH_ID_MAGE_ETC_MODULES => 'app/etc/modules',
+        self::MODULE_PATH_ID_ETC => self::MODULE_FOLDER_PATTERN . '/etc',
+        self::MODULE_PATH_ID_HELPER => self::MODULE_FOLDER_PATTERN . '/Helper',
+        self::MODULE_PATH_ID_BLOCK => self::MODULE_FOLDER_PATTERN . '/Block',
+        self::MODULE_PATH_ID_MODEL => self::MODULE_FOLDER_PATTERN . '/Model',
+        self::MODULE_PATH_ID_CONTROLLER => self::MODULE_FOLDER_PATTERN . '/controllers',
+        self::MODULE_PATH_ID_DATA => self::MODULE_FOLDER_PATTERN . '/data',
+        self::MODULE_PATH_ID_SQL => self::MODULE_FOLDER_PATTERN . '/sql'
     ];
 
     protected $moduleBasicStructure = [
-        'module_etc',
-        'module_helper'
+        self::MODULE_PATH_ID_ETC,
+        self::MODULE_PATH_ID_HELPER
     ];
 
     protected $allowedCodePool = [
@@ -60,12 +78,22 @@ class Module
     }
 
     /**
+     * @param string $pathKey
      * @return string
      */
-    public function getModulePath()
+    public function getModulePath($pathKey = '')
     {
+        $pattern = self::MODULE_FOLDER_PATTERN;
+        if ($pathKey != '') {
+            if (! array_key_exists($pathKey, $this->moduleStructure)) {
+                throw new RuntimeException('This folder is not default.');
+            }
+
+            $pattern = $this->moduleStructure[$pathKey];
+        }
+
         return sprintf(
-            self::MODULE_FOLDER_PATTERN,
+            $pattern,
             $this->validateCodePool(),
             $this->getVendorName(),
             $this->getModuleName()
@@ -130,7 +158,7 @@ class Module
      */
     public function setCodePool($codePool)
     {
-        $this->codePool = $codePool;
+        $this->codePool = strtolower($codePool);
         return $this;
     }
 
@@ -177,5 +205,37 @@ class Module
     {
         $translator = Config::getTranslator();
         return $translator->translate($text);
+    }
+
+    /**
+     * @param string $processClassName
+     * @return mixed
+     */
+    public function runProcess($processClassName)
+    {
+        $process = new $processClassName($this);
+
+        if (! $process instanceof ProcessInterface) {
+            throw new ProcessException(sprintf(self::MESSAGE_INVALID_INSTANCEOF, $processClassName));
+        }
+        return $process->process();
+    }
+
+    /**
+     * @return array
+     */
+    public function getModuleBasicStructure()
+    {
+        return array_map(function ($pathId) {
+            return $this->getModulePath($pathId);
+        }, $this->moduleBasicStructure);
+    }
+
+    /**
+     * @return array
+     */
+    public function getModuleStructure()
+    {
+        return $this->moduleStructure;
     }
 }

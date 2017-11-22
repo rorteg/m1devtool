@@ -29,6 +29,7 @@ abstract class AbstractProcess
 
     /**
      * @return Module
+     * @codeCoverageIgnore
      */
     public function getModule()
     {
@@ -37,6 +38,7 @@ abstract class AbstractProcess
 
     /**
      * @return Filesystem
+     * @codeCoverageIgnore
      */
     public function getFs()
     {

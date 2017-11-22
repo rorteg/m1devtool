@@ -48,6 +48,11 @@ class Module
      */
     private $codePool;
 
+    /**
+     * @var string
+     */
+    private $version = '0.1.0';
+
     protected $moduleStructure = [
         self::MODULE_PATH_ID_MAGE_ETC_MODULES => 'app/etc/modules',
         self::MODULE_PATH_ID_ETC => self::MODULE_FOLDER_PATTERN . '/etc',
@@ -238,5 +243,23 @@ class Module
     public function getModuleStructure()
     {
         return $this->moduleStructure;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param string $version
+     * @return $this
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+        return $this;
     }
 }

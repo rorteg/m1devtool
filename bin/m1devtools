@@ -41,7 +41,8 @@ $applicationName .= PHP_EOL . 'M1 Dev Tools';
 $application = new Application($applicationName, VERSION);
 
 $application->addCommands([
-        new Module\CreateCommand('module:create')
+    new Module\CreateCommand('module:create'),
+    new ConfigCommand('config:init')
 ]);
 
 $application->run();

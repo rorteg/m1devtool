@@ -24,6 +24,7 @@ class CreateFirstStructure extends AbstractProcess implements ProcessInterface
         $this->createBasicStructure();
         $this->createModuleConfigFile();
         $this->getModule()->runProcess(HelperProcess::class);
+        $this->createMagentoRegisterFile();
     }
 
     /**
@@ -50,6 +51,20 @@ class CreateFirstStructure extends AbstractProcess implements ProcessInterface
         $this->getFs()->dumpFile(
             $module->getModulePath($module::MODULE_PATH_ID_ETC) . '/config.xml',
             $twig->render('module/etc/config.xml.twig', ['module' => $module])
+        );
+    }
+
+    /**
+     * Creates the Magento Module Register file.
+     */
+    public function createMagentoRegisterFile()
+    {
+        $twig = Config::getTwig();
+        $module = $this->getModule();
+
+        $this->getFs()->dumpFile(
+            $module->getModulePath($module::MODULE_PATH_ID_MAGE_ETC_MODULES) . '/' . $module->getName() . '.xml',
+            $twig->render('app/etc/modules/Vendor_Module.xml.twig', ['module' => $module])
         );
     }
 }

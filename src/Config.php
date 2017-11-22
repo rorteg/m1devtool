@@ -22,6 +22,8 @@ class Config extends NoodlehausConfig
      */
     private static $translator = null;
 
+    const CONFIG_FILE_NAME = 'm1devtools.json';
+
     /**
      * @var \Twig_Environment|null
      */
@@ -51,7 +53,7 @@ class Config extends NoodlehausConfig
     {
         // Setup/verify m1devtools Settings
         $config = [];
-        $configFile = getcwd() . '/m1devtools.json';
+        $configFile = getcwd() . '/' . self::CONFIG_FILE_NAME;
 
         if (file_exists($configFile)) {
             $config = $configFile;
@@ -65,7 +67,7 @@ class Config extends NoodlehausConfig
      *
      * @codeCoverageIgnore
      */
-    protected function getDefaults()
+    public function getDefaults()
     {
         return [
             'template_path' => __DIR__ . '/../dev/m1devtools/template',

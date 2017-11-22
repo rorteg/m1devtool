@@ -18,7 +18,7 @@ class CreateCommand extends Command
 {
     const HELP = <<< 'EOT'
 Create a new module for the Magento 1.
-- Creates an appropriate module structure containing a source code tree and Settings.
+- Creates an appropriate module basic structure containing a source code tree and Settings.
 EOT;
 
     const HELP_ARG_MODULE = 'The module to create.';
@@ -78,13 +78,13 @@ EOT;
 
         $module->setCodePool($codePool);
 
-        $output->writeln('Module Name: ' . $module->getName() . PHP_EOL . 'Code Pool: ' . $module->getCodePool());
         $output->writeln($module->runProcess(Process\CreateFirstStructure::class));
     }
 
     /**
      * @param string $name
      * @return null|Module
+     * @codeCoverageIgnore
      */
     protected function getModuleInstance($name = '')
     {

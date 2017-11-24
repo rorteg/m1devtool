@@ -5,8 +5,13 @@
  * @license   https://github.com/rorteg/m1devtools/blob/master/LICENSE.md New BSD License
  */
 
-namespace ROB\M1devtools\Module\Exception;
+namespace ROB\M1devtools\Filesystem;
 
-class ProcessException extends \RuntimeException
+class FilesystemFactory
 {
+    public function __invoke()
+    {
+        $fs = new FilesystemAdapter();
+        return $fs;
+    }
 }

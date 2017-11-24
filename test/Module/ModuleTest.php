@@ -8,8 +8,7 @@
 namespace ROBTest\M1devtools\Module;
 
 use PHPUnit\Framework\TestCase;
-use ROB\M1devtools\Config;
-use ROB\M1devtools\Module\Exception\RuntimeException;
+use ROB\M1devtools\Module\Exception\InvalidArgumentException;
 use ROB\M1devtools\Module\Module;
 
 class ModuleTest extends TestCase
@@ -17,106 +16,96 @@ class ModuleTest extends TestCase
     /**
      * @var Module
      */
-    private $module;
-
-    const MODULE_TEST_NAME = 'ROB_Test';
-    const MODULE_TEST_VENDOR_NAME = 'ROB';
-    const MODULE_TEST_MODULE_NAME = 'Test';
+    protected $module;
 
     protected function setUp()
     {
-        $this->module = new Module();
-    }
-
-    public function testWhenNotSetCodePool()
-    {
-        $module = $this->module;
-        $module->setName(self::MODULE_TEST_NAME);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            $this->translate(Module::MESSAGE_INVALID_CODEPOOL)
-        );
-
-        $module->getModulePath();
-    }
-
-    public function testWhenModuleNameIsInvalid()
-    {
-        $module = $this->module;
-        $module->setName('ROB');
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            $this->translate(Module::MESSAGE_INVALID_NAME)
-        );
-
-        $module->getName();
-    }
-
-    public function testReturnModulePath()
-    {
-        $module = $this->module;
-        $module->setName(self::MODULE_TEST_NAME)
-            ->setCodePool('local');
-
-        $this->assertEquals($module->getModulePath(), 'app/code/local/ROB/Test');
+        $this->module = new Module('ROB_Test');
     }
 
     /**
-     * @dataProvider provideModuleFoldersId
-     * @param string $pathId
-     * @param string $expected
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The module name is a required parameter
      */
-    public function testReturnModulePathWithProvidePathId($pathId, $expected)
+    public function testWithoutArgumentsInConstructor()
     {
-        $module = $this->module;
-        $module
-            ->setName(self::MODULE_TEST_NAME)
-            ->setCodePool('local');
-
-        $this->assertEquals($module->getModulePath($pathId), $expected);
+        $module = new Module();
     }
 
-    public function provideModuleFoldersId()
+    /**
+     * @dataProvider provideInvalidArgumentsToConstructor
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage The module name needs to follow the following format: Vendor_Module
+     */
+    public function testInvalidArgumentsInConstructor($fullName)
     {
-        $modulePath = 'app/code/local/' . self::MODULE_TEST_VENDOR_NAME . '/' . self::MODULE_TEST_MODULE_NAME . '/';
+        $module = new Module($fullName);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     * @expectedExceptionMessage Invalid Code Pool
+     */
+    public function testInvalidCodePoolInConstructor()
+    {
+        $module = new Module('ROB_Test', 'test');
+    }
+
+    public function provideInvalidArgumentsToConstructor()
+    {
         return [
-            [Module::MODULE_PATH_ID_BLOCK, $modulePath . 'Block'],
-            [Module::MODULE_PATH_ID_ETC, $modulePath . 'etc'],
-            [Module::MODULE_PATH_ID_HELPER, $modulePath . 'Helper'],
-            [Module::MODULE_PATH_ID_CONTROLLER, $modulePath . 'controllers'],
-            [Module::MODULE_PATH_ID_DATA, $modulePath . 'data'],
-            [Module::MODULE_PATH_ID_SQL, $modulePath . 'sql'],
-            [Module::MODULE_PATH_ID_MAGE_ETC_MODULES, 'app/etc/modules'],
+            ['rob'],
+            ['ROB'],
+            ['ookokds-okokds']
         ];
     }
 
-    public function testGetModuleBasicStructure()
+    public function testModuleFullNameReturn()
     {
-        $module = $this->module;
-        $module->setCodePool('local');
-        $module->setName(self::MODULE_TEST_NAME);
-
-        $this->assertArraySubset($module->getModuleBasicStructure(), [
-            $module->getModulePath($module::MODULE_PATH_ID_ETC),
-            $module->getModulePath($module::MODULE_PATH_ID_HELPER)
-        ]);
+        $this->assertEquals('ROB_Test', $this->module->getFullName());
     }
 
-    public function testGetModuleAliasAndCodePool()
+    public function testModuleNameReturn()
     {
-        $module = $this->module;
-        $module->setName('ROB_Test');
-        $module->setCodePool('local');
-
-        $this->assertEquals($module->getCodePool(), 'local');
-        $this->assertEquals($module->getModuleAlias(), 'rob_test');
+        $this->assertEquals('Test', $this->module->getName());
     }
 
-    private function translate($message)
+    public function testModuleVendorReturn()
     {
-        $translator = Config::getTranslator();
-        return $translator->translate($message);
+        $this->assertEquals('ROB', $this->module->getVendor());
+    }
+
+    public function testCodePoolReturn()
+    {
+        $this->assertEquals('local', $this->module->getCodePool());
+
+        $module = new Module('ROB_Test', 'community');
+        $this->assertEquals('community', $module->getCodePool());
+    }
+
+    public function testPathReturn()
+    {
+        $this->assertEquals('app/code/local/ROB/Test', $this->module->getPath());
+    }
+
+    public function testAliasReturn()
+    {
+        $this->assertEquals('rob_test', $this->module->getAlias());
+    }
+
+    public function testDefaultVersion()
+    {
+        $this->assertEquals('0.1.0', $this->module->getVersion());
+    }
+
+    public function testSetVersion()
+    {
+        $this->module->setVersion('1.0.0');
+        $this->assertEquals('1.0.0', $this->module->getVersion());
+    }
+
+    public function testMageRegisterFileRelativePathReturn()
+    {
+        $this->assertEquals('app/etc/modules/ROB_Test.xml', $this->module->getMageRegistryFile());
     }
 }

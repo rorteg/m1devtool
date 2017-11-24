@@ -5,12 +5,8 @@
  * @license   https://github.com/rorteg/m1devtools/blob/master/LICENSE.md New BSD License
  */
 
-namespace ROB\M1devtools\Module\Process;
+namespace ROB\M1devtools\Module\Component\Exception;
 
-interface ProcessInterface
+class RuntimeException extends \RuntimeException
 {
-    /**
-     * @return mixed
-     */
-    public function process();
 }

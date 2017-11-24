@@ -7,175 +7,177 @@
 
 namespace ROB\M1devtools\Module;
 
-use ROB\M1devtools\Module\Exception\RuntimeException;
-use ROB\M1devtools\Config;
+use ROB\M1devtools\Module\Exception\InvalidArgumentException;
 
-class Module
+class Module implements ModuleInterface
 {
-    const MAGE_ETC_FOLDER = 'app/etc';
-    const MAGE_CODE_LOCAL = 'app/code/local';
-    const MAGE_CODE_COMMUNITY = 'app/code/community';
-    const MODULE_FOLDER_PATTERN = 'app/code/%s/%s/%s';
-    const MESSAGE_INVALID_CODEPOOL = 'The codePool is invalid. Only accepted: "local" or "community"';
-    const MESSAGE_INVALID_NAME = 'The module name needs to follow the following format: Vendor_Module';
+    private $fullName = null;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private $name = null;
 
-    /**
-     * @var string
-     */
-    private $codePool;
+    private $vendor = null;
 
-    protected $moduleStructure = [
-        'mage_etc_modules' => 'app/etc/modules',
-        'module_etc' => self::MODULE_FOLDER_PATTERN . '/etc',
-        'module_helper' => self::MODULE_FOLDER_PATTERN . '/Helper',
-        'module_block' => self::MODULE_FOLDER_PATTERN . '/Block',
-        'module_model' => self::MODULE_FOLDER_PATTERN . '/Model',
-        'module_controller' => self::MODULE_FOLDER_PATTERN . '/controllers',
-        'module_data' => self::MODULE_FOLDER_PATTERN . '/data',
-        'module_sql' => self::MODULE_FOLDER_PATTERN . '/sql'
-    ];
+    private $codePool = null;
 
-    protected $moduleBasicStructure = [
-        'module_etc',
-        'module_helper'
-    ];
+    private $path = null;
 
-    protected $allowedCodePool = [
-        'local',
-        'community'
-    ];
+    private $alias = null;
+
+    private $version = '0.1.0';
+
+    private $allowedCodePool = ['local', 'community'];
 
     /**
      * Module constructor.
-     * @param string $name
+     * @param string|null $fullName
+     * @param string $codePool
      */
-    public function __construct($name = '')
+    public function __construct($fullName = null, $codePool = 'local')
     {
-        $this->name = $name;
+        if ($fullName === null) {
+            throw new InvalidArgumentException('The module name is a required parameter');
+        }
+
+        if (! $this->validateFullName($fullName)) {
+            throw new InvalidArgumentException('The module name needs to follow the following format: Vendor_Module');
+        }
+
+        if (! in_array($codePool, $this->allowedCodePool)) {
+            throw new InvalidArgumentException('Invalid Code Pool');
+        }
+
+        $this->fullName = $fullName;
+        $this->codePool = $codePool;
     }
 
     /**
+     * Validate Module full name. Ex: Vendor_Module
+     * @param string $fullName
+     * @return bool
+     */
+    public function validateFullName($fullName = null)
+    {
+        if ($fullName == null) {
+            $fullName = $this->getFullName();
+        }
+
+        $moduleNameExplode = explode('_', $fullName);
+        if (! substr_count($fullName, '_')
+            || count($moduleNameExplode) !== 2
+            || ($moduleNameExplode[1] == '')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * return Vendor_Module
      * @return string
      */
-    public function getModulePath()
+    public function getFullName()
     {
-        return sprintf(
-            self::MODULE_FOLDER_PATTERN,
-            $this->validateCodePool(),
-            $this->getVendorName(),
-            $this->getModuleName()
-        );
+        return $this->fullName;
     }
 
     /**
+     * return Module (Name of module without vendor name).
      * @return string
      */
     public function getName()
     {
-        return $this->validateName();
+        if ($this->name === null) {
+            $this->setNameAndVendor();
+        }
+
+        return $this->name;
     }
 
     /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    /**
+     * return Only the name of the Vendor
      * @return string
      */
-    public function getVendorName()
+    public function getVendor()
     {
-        $moduleName = explode('_', $this->validateName());
-        return $moduleName[0];
+        if ($this->vendor === null) {
+            $this->setNameAndVendor();
+        }
+
+        return $this->vendor;
     }
 
     /**
-     * @return mixed
+     * Auxiliary method for internal set properties
      */
-    public function getModuleName()
+    private function setNameAndVendor()
     {
-        $moduleName = explode('_', $this->validateName());
-        return $moduleName[1];
+        $fullName = explode('_', $this->getFullName());
+        $this->vendor = $fullName[0];
+        $this->name = $fullName[1];
     }
 
     /**
-     * @return string
-     */
-    public function getModuleAlias()
-    {
-        return strtolower($this->validateName());
-    }
-
-    /**
+     * return local|community
      * @return string
      */
     public function getCodePool()
     {
-        return $this->validateCodePool();
+        return $this->codePool;
     }
 
     /**
-     * @param string $codePool
-     * @return $this
+     * return relative path ex: app/code/local/Vendor/Module
+     * @return string
      */
-    public function setCodePool($codePool)
+    public function getPath()
     {
-        $this->codePool = $codePool;
+        if ($this->path === null) {
+            $this->path = self::MAGE_CODE_FOLDER .
+            '/' . $this->getCodePool() .
+            '/' . $this->getVendor() .
+            '/' . $this->getName();
+        }
+
+        return $this->path;
+    }
+
+    /**
+     * return Module alias ex: vendor_module
+     * @return string
+     */
+    public function getAlias()
+    {
+        if ($this->alias === null) {
+            $this->alias = strtolower($this->getFullName());
+        }
+        return $this->alias;
+    }
+
+    /**
+     * @param string $version set version of the module
+     * @return Module
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
         return $this;
     }
 
     /**
-     * Validate Module Name
-     *
+     * Get Module version
      * @return string
-     * @throws RuntimeException
      */
-    public function validateName()
+    public function getVersion()
     {
-        $moduleName = $this->name;
-        $moduleNameExplode = explode('_', $moduleName);
-        if (! substr_count($moduleName, '_')
-            || count($moduleNameExplode) !== 2
-            || ($moduleNameExplode[1] == '')) {
-            throw new RuntimeException($this->translate(self::MESSAGE_INVALID_NAME));
-        }
-
-        return $moduleName;
+        return $this->version;
     }
 
     /**
+     * Get relative path to register file (app/etc/modules/Vendor_Module.xml)
      * @return string
-     * @throws RuntimeException
      */
-    public function validateCodePool()
+    public function getMageRegistryFile()
     {
-        $codePool = $this->codePool;
-
-        if (! in_array($codePool, $this->allowedCodePool)) {
-            throw new RuntimeException($this->translate(self::MESSAGE_INVALID_CODEPOOL));
-        }
-
-        return $codePool;
-    }
-
-    /**
-     * @param $text
-     * @return string
-     * @codeCoverageIgnore
-     */
-    public function translate($text)
-    {
-        $translator = Config::getTranslator();
-        return $translator->translate($text);
+        return self::MAGE_REGISTER_ETC_FOLDER . '/' . $this->getFullName() . '.xml';
     }
 }

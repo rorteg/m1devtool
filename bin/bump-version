@@ -22,7 +22,7 @@ $to->addArgument('version', InputArgument::REQUIRED, 'Version to which to bump')
 $to->setCode(function (InputInterface $input, OutputInterface $output) {
     $version = addslashes($input->getArgument('version'));
     $output->writeln(sprintf('<info>Setting script versions to %s</info>', $version));
-    foreach (glob(__DIR__ . '/expressive*') as $script) {
+    foreach (glob(__DIR__ . '/*') as $script) {
         $output->writeln(sprintf('  <info>- Updating script %s</info>', $script));
         $contents = file_get_contents($script);
         $contents = preg_replace(

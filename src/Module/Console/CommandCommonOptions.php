@@ -5,7 +5,7 @@
  * @license   https://github.com/rorteg/m1devtools/blob/master/LICENSE.md New BSD License
  */
 
-namespace ROB\M1devtools\Module;
+namespace ROB\M1devtools\Module\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,7 +32,7 @@ final class CommandCommonOptions
 
         $command->addOption(
             'code-pool',
-            'cp',
+            'c',
             InputOption::VALUE_REQUIRED,
             'Specify the code pool. Ex: "community"',
             'local'

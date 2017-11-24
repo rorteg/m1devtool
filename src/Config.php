@@ -22,10 +22,14 @@ class Config extends NoodlehausConfig
      */
     private static $translator = null;
 
+    const CONFIG_FILE_NAME = 'm1devtools.json';
+
     /**
      * @var \Twig_Environment|null
      */
     private static $twig = null;
+
+    const MESSAGE_INVALID_CONFIG_TRANSLATOR = __CLASS__ . ': Translator settings are invalid.';
 
     /**
      * @return null|Config
@@ -49,7 +53,7 @@ class Config extends NoodlehausConfig
     {
         // Setup/verify m1devtools Settings
         $config = [];
-        $configFile = getcwd() . '/m1devtools.json';
+        $configFile = getcwd() . '/' . self::CONFIG_FILE_NAME;
 
         if (file_exists($configFile)) {
             $config = $configFile;
@@ -63,11 +67,12 @@ class Config extends NoodlehausConfig
      *
      * @codeCoverageIgnore
      */
-    protected function getDefaults()
+    public function getDefaults()
     {
         return [
             'template_path' => __DIR__ . '/../dev/m1devtools/template',
             'template_docheader' => __DIR__ . '/../dev/m1devtools/template/docheader',
+            'modman' => false,
             'translator' => [
                 'locale' => 'en_US',
                 'translation_file_patterns' => [
@@ -91,7 +96,10 @@ class Config extends NoodlehausConfig
         if (self::$twig === null) {
             $config = self::getInstance();
             // Setup Twig Template
-            \Twig_Autoloader::register();
+            if (! class_exists(\Twig_Loader_Filesystem::class)) {
+                require_once __DIR__ . '/../vendor/twig/twig/lib/Twig/Autoloader.php';
+                \Twig_Autoloader::register();
+            }
             $loader = new \Twig_Loader_Filesystem($config->get('template_path'));
             $loader->addPath($config->get('template_docheader'), 'docheader');
             self::$twig = new \Twig_Environment($loader);
@@ -119,7 +127,7 @@ class Config extends NoodlehausConfig
 
             foreach ($translationFilePatterns as $fp) {
                 if (! isset($fp['type']) || ! isset($fp['base_dir']) || ! isset($fp['pattern'])) {
-                    throw new \RuntimeException(__CLASS__ . ': Translator settings are invalid.');
+                    throw new \RuntimeException(self::MESSAGE_INVALID_CONFIG_TRANSLATOR);
                 }
 
                 if (! isset($fp['text_domain'])) {
@@ -136,7 +144,6 @@ class Config extends NoodlehausConfig
 
             self::$translator->setLocale($translatorConfig['locale']);
             self::$translator->setFallbackLocale('en_US');
-
             self::$translator->setCache(null);
         }
 

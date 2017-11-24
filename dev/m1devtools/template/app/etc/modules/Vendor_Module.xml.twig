@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!--
+{% include "@docheader/docheader.twig" %}
+-->
+<config>
+    <modules>
+        <{{ module.getFullName() }}>
+            <active>true</active>
+            <codePool>{{ module.getCodePool() }}</codePool>
+        </{{ module.getFullName() }}>
+    </modules>
+</config>

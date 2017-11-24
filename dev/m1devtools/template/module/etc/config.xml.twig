@@ -4,15 +4,15 @@
 -->
 <config>
     <modules>
-        <{{ modulename }}>
-            <version>{{ moduleversion | default('0.1.0') }}</version>
-        </{{ modulename }}>
+        <{{ module.getAlias() }}>
+            <version>{{ module.getVersion() | default('0.1.0') }}</version>
+        </{{ module.getAlias() }}>
     </modules>
     <global>
         <helpers>
-            <{{ modulename | lower }}>
-                <class>{{ modulename }}_Helper</class>
-            </{{ modulename | lower }}>
+            <{{ module.getAlias() }}>
+                <class>{{ module.getFullName() }}_Helper</class>
+            </{{ module.getAlias() }}>
         </helpers>
     </global>
 </config>

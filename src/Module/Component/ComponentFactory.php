@@ -40,6 +40,7 @@ class ComponentFactory
 
     /**
      * @param ModuleFacadeInterface $moduleFacade
+     * @codeCoverageIgnore
      */
     public function setModuleFacade(ModuleFacadeInterface $moduleFacade)
     {
@@ -52,10 +53,6 @@ class ComponentFactory
      */
     public function __invoke($componentName)
     {
-        if ($this->moduleFacade === null) {
-            throw new RuntimeException('Component classes depend on ModuleFacade');
-        }
-
         $className = 'ROB\\M1devtools\\Module\\Component\\' .
             preg_replace('/\s+/', '', ucwords(str_replace('_', ' ', $componentName)));
 

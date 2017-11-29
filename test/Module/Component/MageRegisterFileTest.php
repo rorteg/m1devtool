@@ -7,12 +7,10 @@
 
 namespace ROBTest\M1devtools\Module\Component;
 
-use PHPUnit\Framework\TestCase;
-use ROB\M1devtools\Filesystem\FilesystemAdapter;
 use ROB\M1devtools\Module\Component\MageRegisterFile;
-use ROB\M1devtools\Module\ModuleFacadeFactory;
+use ROB\M1devtools\Module\ModuleFacade;
 
-class MageRegisterFileTest extends TestCase
+class MageRegisterFileTest extends AbstractComponent
 {
     /**
      * @var MageRegisterFile
@@ -21,16 +19,14 @@ class MageRegisterFileTest extends TestCase
 
     protected function setUp()
     {
-        $moduleFacadeFactory = new ModuleFacadeFactory();
-        $moduleFacade = $moduleFacadeFactory('ROB_Test');
-        $this->mageRegisterFile = new MageRegisterFile(
-            $moduleFacade,
-            new FilesystemAdapter()
-        );
+        parent::setUp();
+        $factory = $this->componentFactory;
+        $this->mageRegisterFile = $factory(ModuleFacade::COMPONENT_MAGE_REGISTER_FILE);
     }
 
-    public function testCreateNewModule()
+    public function testGetComponentName()
     {
-        //$this->assertInstanceOf(MageRegisterFile::class, $this->mageRegisterFile->create());
+        $expected = $this->moduleFacade->getModule()->getFullName();
+        $this->assertEquals($expected, $this->mageRegisterFile->getName());
     }
 }

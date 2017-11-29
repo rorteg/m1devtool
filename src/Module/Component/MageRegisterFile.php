@@ -30,17 +30,9 @@ class MageRegisterFile extends AbstractComponent implements ComponentInterface
      */
     public function remove()
     {
-        // Check if this Module exists
-        if (! $this->moduleFacade->exists()) {
-            throw new RuntimeException(ModuleFacade::MESSAGE_MODULE_NOT_EXISTS);
-        }
-
-        // Check if the Magento Register File exists
-        if (! $this->exists()) {
-            throw new RuntimeException(self::MESSAGE_COMPONENT_NOT_EXISTS);
-        }
-
+        $this->firstCheckRemove();
         $this->fs->remove($this->getComponentFile());
+        $this->lastCheckRemove();
     }
 
     /**

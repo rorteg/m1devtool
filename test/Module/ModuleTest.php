@@ -108,4 +108,10 @@ class ModuleTest extends TestCase
     {
         $this->assertEquals('app/etc/modules/ROB_Test.xml', $this->module->getMageRegistryFile());
     }
+
+    public function testValidateFullName()
+    {
+        $module = $this->module;
+        $this->assertTrue($module->validateFullName());
+    }
 }

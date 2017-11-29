@@ -63,6 +63,8 @@ abstract class AbstractComponent
         );
 
         $this->lastCheckCreate();
+
+        return true;
     }
 
     /**
@@ -70,10 +72,7 @@ abstract class AbstractComponent
      */
     public function firstCheckCreate()
     {
-        // Check if the module folder exists
-        if (! $this->fs->exists($this->moduleFacade->getModule()->getPath())) {
-            throw new RuntimeException('The Module do not exists');
-        }
+        $this->checkIfModuleFolderExists();
 
         // Check if the Component File exists
         if ($this->exists()) {
@@ -90,8 +89,45 @@ abstract class AbstractComponent
     {
         // Check if the file was created
         if (! $this->exists()) {
-            throw new RuntimeException('There was a problem trying to create a file');
+            throw new RuntimeException('There was a problem trying to create the Module Component');
         }
+    }
+
+    /**
+     * First Check when remove Module Component
+     */
+    public function firstCheckRemove()
+    {
+        // Check if the module folder exists
+        $this->checkIfModuleFolderExists();
+        // Check if the module component exists
+        if (! $this->exists()) {
+            throw new RuntimeException(
+                'There was a problem trying to remove the Module Component: The component already exists.'
+            );
+        }
+    }
+
+    /**
+     * Last Check when remove Module Component
+     */
+    public function lastCheckRemove()
+    {
+        if ($this->exists()) {
+            throw new RuntimeException('There was a problem trying to remove the Module Component');
+        }
+    }
+
+    /**
+     * Check if the module folder exists
+     */
+    public function checkIfModuleFolderExists()
+    {
+        if (! $this->fs->exists($this->moduleFacade->getModule()->getPath())) {
+            throw new RuntimeException(ModuleFacade::MESSAGE_MODULE_NOT_EXISTS);
+        }
+
+        return true;
     }
 
     /**

@@ -9,6 +9,7 @@ namespace ROBTest\M1devtools\Module;
 
 use PHPUnit\Framework\TestCase;
 use ROB\M1devtools\Filesystem\FilesystemAdapter;
+use ROB\M1devtools\Module\Exception\RuntimeException;
 use ROB\M1devtools\Module\Module;
 use ROB\M1devtools\Module\ModuleFacade;
 use Noodlehaus\Config as NoodlehausConfig;
@@ -43,6 +44,18 @@ class ModuleFacadeTest extends TestCase
     /**
      * @depends testCreateModule
      */
+    public function testCreateModuleIfExists()
+    {
+        $moduleFacade = $this->moduleFacade;
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage($moduleFacade::MESSAGE_MODULE_EXISTS);
+
+        $moduleFacade->create();
+    }
+
+    /**
+     * @depends testCreateModuleIfExists
+     */
     public function testRemoveModule()
     {
         $this->assertTrue($this->moduleFacade->remove());
@@ -65,5 +78,18 @@ class ModuleFacadeTest extends TestCase
                 $fs->remove('app');
             }
         }
+    }
+
+    /**
+     * @depends testModuleNotExists
+     */
+    public function testRemoveModuleIfNotExists()
+    {
+        $moduleFacade = $this->moduleFacade;
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage($moduleFacade::MESSAGE_MODULE_NOT_EXISTS);
+
+        $moduleFacade->remove();
     }
 }

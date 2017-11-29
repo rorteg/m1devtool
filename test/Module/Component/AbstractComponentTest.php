@@ -7,12 +7,18 @@
 
 namespace ROBTest\M1devtools\Module\Component;
 
-use ROB\M1devtools\Module\Component\Config;
 use ROB\M1devtools\Module\ModuleFacade;
 use ROB\M1devtools\Module\Component\Exception\RuntimeException;
 
 class AbstractComponentTest extends AbstractComponent
 {
+    protected function setUp()
+    {
+        parent::setUp();
+        $factory = $this->componentFactory;
+        $this->componentContext = $factory(ModuleFacade::COMPONENT_CONFIG);
+    }
+
     /**
      * @expectedException RuntimeException
      */
@@ -22,10 +28,7 @@ class AbstractComponentTest extends AbstractComponent
             $this->moduleFacade->create();
         }
 
-        $factory = $this->componentFactory;
-        /** @var Config $component */
-        $component = $factory(ModuleFacade::COMPONENT_CONFIG);
-        $component->create();
+        $this->componentContext->create();
     }
 
     /**
@@ -38,9 +41,30 @@ class AbstractComponentTest extends AbstractComponent
             $this->moduleFacade->remove();
         }
 
-        $factory = $this->componentFactory;
-        /** @var Config $component */
-        $component = $factory(ModuleFacade::COMPONENT_CONFIG);
-        $component->create();
+        $this->componentContext->create();
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testLastCheckCreateWhenComponentNotExists()
+    {
+        if ($this->componentContext->exists()) {
+            $this->componentContext->remove();
+        }
+
+        $this->componentContext->lastCheckCreate();
+    }
+
+    /**
+     * @expectedException RuntimeException
+     */
+    public function testFirstCheckRemoveWhenComponentNotExists()
+    {
+        if ($this->componentContext->exists()) {
+            $this->componentContext->remove();
+        }
+
+        $this->componentContext->firstCheckRemove();
     }
 }

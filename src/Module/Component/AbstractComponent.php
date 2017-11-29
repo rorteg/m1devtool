@@ -103,7 +103,7 @@ abstract class AbstractComponent
         // Check if the module component exists
         if (! $this->exists()) {
             throw new RuntimeException(
-                'There was a problem trying to remove the Module Component: The component already exists.'
+                'There was a problem trying to remove the Module Component: The component not exists.'
             );
         }
     }

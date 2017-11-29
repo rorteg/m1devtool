@@ -7,7 +7,6 @@
 
 namespace ROB\M1devtools\Module;
 
-use Mockery\CountValidator\Exception;
 use ROB\M1devtools\Module\Component\ComponentFactory;
 use ROB\M1devtools\Module\Component\ComponentInterface;
 use ROB\M1devtools\Module\Exception\RuntimeException as ModuleRuntimeException;
@@ -43,6 +42,7 @@ class ModuleFacade implements ModuleFacadeInterface
         Filesystem $filesystem
     ) {
 
+
         $this->module = $module;
         $this->filesystem = $filesystem;
     }
@@ -57,7 +57,8 @@ class ModuleFacade implements ModuleFacadeInterface
         $md = $this->module;
 
         if (! $fs->exists($md->getPath()) ||
-            ! $this->getComponent(self::COMPONENT_MAGE_REGISTER_FILE)->exists()) {
+            ! $this->getComponent(self::COMPONENT_MAGE_REGISTER_FILE)->exists()
+        ) {
             return false;
         }
 
@@ -133,22 +134,18 @@ class ModuleFacade implements ModuleFacadeInterface
      */
     public function remove()
     {
-        try {
-            if (! $this->exists()) {
-                throw new ModuleRuntimeException(self::MESSAGE_MODULE_NOT_EXISTS);
-            }
-
-            //Remove Mage Register File
-            $mageRegister = $this->getComponent(self::COMPONENT_MAGE_REGISTER_FILE);
-            $mageRegister->remove();
-
-            //Remove Module Structure
-            $this->filesystem->remove($this->getModule()->getPath());
-
-            return true;
-        } catch (Exception $e) {
-            return false;
+        if (! $this->exists()) {
+            throw new ModuleRuntimeException(self::MESSAGE_MODULE_NOT_EXISTS);
         }
+
+        //Remove Mage Register File
+        $mageRegister = $this->getComponent(self::COMPONENT_MAGE_REGISTER_FILE);
+        $mageRegister->remove();
+
+        //Remove Module Structure
+        $this->filesystem->remove($this->getModule()->getPath());
+
+        return true;
     }
 
     /**

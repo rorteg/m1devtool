@@ -10,7 +10,9 @@ namespace ROBTest\M1devtools\Module\Component;
 use PHPUnit\Framework\TestCase;
 use ROB\M1devtools\Filesystem\FilesystemAdapter;
 use ROB\M1devtools\Module\Component\ComponentFactory;
+use ROB\M1devtools\Module\Component\Exception\RuntimeException;
 use ROB\M1devtools\Module\Component\MageRegisterFile;
+use ROB\M1devtools\Module\ModuleFacade;
 use ROB\M1devtools\Module\ModuleFacadeFactory;
 
 class ComponentFactoryTest extends TestCase

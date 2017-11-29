@@ -34,6 +34,7 @@ class Helper extends AbstractComponent implements ComponentInterface
     /**
      * @param $name
      * @return $this
+     * @codeCoverageIgnore
      */
     public function setName($name)
     {

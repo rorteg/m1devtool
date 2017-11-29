@@ -7,26 +7,22 @@
 
 namespace ROBTest\M1devtools\Module\Component;
 
-use ROB\M1devtools\Module\Component\MageRegisterFile;
 use ROB\M1devtools\Module\ModuleFacade;
 
-class MageRegisterFileTest extends AbstractComponent
+class HelperTest extends AbstractComponent
 {
-    /**
-     * @var MageRegisterFile
-     */
-    private $mageRegisterFile;
-
     protected function setUp()
     {
         parent::setUp();
         $factory = $this->componentFactory;
-        $this->mageRegisterFile = $factory(ModuleFacade::COMPONENT_MAGE_REGISTER_FILE);
+        $this->componentContext = $factory(ModuleFacade::COMPONENT_HELPER);
     }
 
-    public function testGetComponentName()
+    public function testGetName()
     {
-        $expected = $this->moduleFacade->getModule()->getFullName();
-        $this->assertEquals($expected, $this->mageRegisterFile->getName());
+        $this->assertEquals('Data', $this->componentContext->getName());
+        $this->componentContext->setName('customhelpername');
+        $this->assertEquals('Customhelpername', $this->componentContext->getName());
+        $this->componentContext->setName('data');
     }
 }
